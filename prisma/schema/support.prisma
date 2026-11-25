@@ -1,0 +1,56 @@
+enum SupportTicketStatus {
+  OPEN
+  IN_PROGRESS
+  WAITING_CUSTOMER
+  RESOLVED
+  ESCALATED
+}
+
+enum SupportRefundDecision {
+  NONE
+  PENDING
+  APPROVED
+  PROCESSING
+  DENIED
+  ISSUED
+}
+
+model SupportTicket {
+  id                    String                @id
+  customerUserId        String
+  assignedToUserId      String?
+  orderId               String?
+  subject               String
+  status                SupportTicketStatus   @default(OPEN)
+  requestedRefundAmount BigInt?
+  refundReason          String?
+  refundDecision        SupportRefundDecision @default(NONE)
+  refundDecisionById    String?
+  refundDecisionAt      DateTime?              @db.Timestamptz(6)
+  refundId              String?
+  sourceEventKey        String?               @unique
+  createdAt             DateTime              @default(now()) @db.Timestamptz(6)
+  updatedAt             DateTime              @updatedAt @db.Timestamptz(6)
+
+  customer   User                  @relation("SupportTicketCustomer", fields: [customerUserId], references: [id], onDelete: Cascade)
+  assignee   User?                 @relation("SupportTicketAssignee", fields: [assignedToUserId], references: [id], onDelete: SetNull)
+  order      Order?                @relation(fields: [orderId], references: [id], onDelete: SetNull)
+  messages   SupportTicketMessage[]
+
+  @@index([customerUserId, createdAt])
+  @@index([status, updatedAt])
+  @@index([assignedToUserId, status])
+}
+
+model SupportTicketMessage {
+  id        String   @id
+  ticketId  String
+  authorId  String
+  body      String
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+
+  ticket SupportTicket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  author User          @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@index([ticketId, createdAt])
+}

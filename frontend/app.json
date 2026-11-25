@@ -1,0 +1,44 @@
+{
+  "expo": {
+    "name": "Swish",
+    "slug": "shopaflo",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "scheme": "shopaflo",
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.shopaflo.app",
+      "usesAppleSignIn": true,
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
+    },
+    "android": {
+      "package": "com.shopaflo.app"
+    },
+    "web": {
+      "bundler": "metro"
+    },
+    "plugins": [
+      "expo-font",
+      "expo-video",
+      "expo-notifications",
+      [
+        "@stripe/stripe-react-native",
+        {
+          "enableGooglePay": false
+        }
+      ],
+      "expo-secure-store",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Swish uses your photo library to let you choose a profile picture or add listing photos."
+        }
+      ],
+      "expo-web-browser",
+      "expo-apple-authentication"
+    ]
+  }
+}

@@ -1,0 +1,13 @@
+// A viewer blocking another user. Hides the blocked user's live chat messages from the blocker
+// going forward (checked client-side off a block list, same "no per-socket server fan-out
+// filtering" tradeoff this scale doesn't need yet). One-directional and standalone, no foreign key
+// — same "no cross-module lookup at write time" shape as Report (reports.prisma), so this table
+// never forces identity/chat to import a new module back.
+model UserBlock {
+  blockerUserId String
+  blockedUserId String
+  createdAt     DateTime @default(now()) @db.Timestamptz(6)
+
+  @@id([blockerUserId, blockedUserId])
+  @@index([blockedUserId])
+}
