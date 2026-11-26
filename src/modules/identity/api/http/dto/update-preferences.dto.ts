@@ -19,7 +19,7 @@ const PrivacyPatch = z
   .partial()
   .strict();
 
-const LanguagePatch = z.enum(['en', 'es']);
+const LanguagePatch = z.enum(['en', 'es', 'fr', 'pt', 'ar', 'hi', 'zh', 'sw', 'af', 'zu', 'xh', 'st', 'tn', 'nso']);
 
 // A patch: send only what changed. An empty body is rejected so a typo cannot silently do nothing.
 export const UpdatePreferencesSchema = z

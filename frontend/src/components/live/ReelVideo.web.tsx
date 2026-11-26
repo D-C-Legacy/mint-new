@@ -2,6 +2,9 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Animated, Pressable, StyleSheet, View } from 'react-native';
 import Hls from 'hls.js';
 import { Feather } from '@expo/vector-icons';
+import type { AppLanguage } from '../../types/preferences';
+import { AppText } from '../ui';
+import { translateText } from '../../i18n';
 
 // Web override of `ReelVideo.tsx`. `expo-video`'s web player sets the HLS `.m3u8` URL directly as a
 // <video src>, which only plays in Safari — Chrome, Edge, and Firefox have no native HLS support in
@@ -24,6 +27,9 @@ export function ReelVideo({
   flash,
   volume,
   captionLanguage,
+  showCaptionButton = true,
+  captionsEnabled: externalCaptionsEnabled,
+  onCaptionsChange,
 }: {
   source: string;
   active: boolean;
@@ -32,15 +38,17 @@ export function ReelVideo({
   // 0-1. Web only (browsers have no hardware volume buttons); defaults to full, same as a fresh
   // <video> element's own default.
   volume?: number;
-  captionLanguage: 'en' | 'es';
+  captionLanguage?: AppLanguage;
+  showCaptionButton?: boolean;
+  captionsEnabled?: boolean;
+  onCaptionsChange?: (enabled: boolean) => void;
 }) {
   const containerRef = useRef<View>(null);
   const videoElRef = useRef<HTMLVideoElement | null>(null);
   const hlsRef = useRef<Hls | null>(null);
   const activeRef = useRef(active);
-  const [subtitleTracks, setSubtitleTracks] = useState<Hls['subtitleTracks']>([]);
-  const [hasTextTracks, setHasTextTracks] = useState(false);
-  const [captionsEnabled, setCaptionsEnabled] = useState(false);
+  const [localCaptionsEnabled, setLocalCaptionsEnabled] = useState(false);
+  const captionsEnabled = externalCaptionsEnabled ?? localCaptionsEnabled;
   activeRef.current = active;
 
   useEffect(() => {
@@ -50,9 +58,8 @@ export function ReelVideo({
     if (!container) return;
 
     const video = document.createElement('video');
-    setSubtitleTracks([]);
-    setHasTextTracks(false);
-    setCaptionsEnabled(false);
+    setLocalCaptionsEnabled(false);
+    onCaptionsChange?.(false);
     video.autoplay = true;
     video.playsInline = true;
     video.muted = muted;
@@ -68,7 +75,6 @@ export function ReelVideo({
     const syncTextTracks = () => {
       const tracks = Array.from(video.textTracks);
       for (const track of tracks) track.mode = 'disabled';
-      setHasTextTracks(tracks.length > 0);
     };
     video.textTracks.addEventListener('addtrack', syncTextTracks);
     video.addEventListener('loadedmetadata', syncTextTracks);
@@ -91,9 +97,7 @@ export function ReelVideo({
           hlsRef.current.attachMedia(video);
         }
       });
-      hls.on(Hls.Events.SUBTITLE_TRACKS_UPDATED, (_event, data) => {
-        setSubtitleTracks(data.subtitleTracks);
-        setCaptionsEnabled(false);
+      hls.on(Hls.Events.SUBTITLE_TRACKS_UPDATED, () => {
         hls.subtitleDisplay = false;
       });
       hls.on(Hls.Events.MANIFEST_PARSED, () => {
@@ -113,7 +117,22 @@ export function ReelVideo({
       container.removeChild(video);
       videoElRef.current = null;
     };
-  }, [source]);
+  }, [source, onCaptionsChange]);
+
+  useEffect(() => {
+    if (externalCaptionsEnabled === undefined) return;
+    const hls = hlsRef.current;
+    if (!externalCaptionsEnabled) {
+      if (hls) hls.subtitleDisplay = false;
+      const video = videoElRef.current;
+      if (video) for (const track of Array.from(video.textTracks)) track.mode = 'disabled';
+      return;
+    }
+    if (hls) hls.subtitleDisplay = false;
+    const video = videoElRef.current;
+    if (!video) return;
+    for (const track of Array.from(video.textTracks)) track.mode = 'disabled';
+  }, [externalCaptionsEnabled]);
 
   const toggleCaptions = () => {
     const hls = hlsRef.current;
@@ -122,25 +141,18 @@ export function ReelVideo({
       if (hls) hls.subtitleDisplay = false;
       const video = videoElRef.current;
       if (video) for (const track of Array.from(video.textTracks)) track.mode = 'disabled';
-      setCaptionsEnabled(false);
+      setLocalCaptionsEnabled(false);
+      onCaptionsChange?.(false);
       return;
     }
-    if (hls && hls.subtitleTracks.length > 0) {
-      const index = hls.subtitleTracks.findIndex((track) => track.lang?.toLowerCase().startsWith(captionLanguage));
-      const fallback = index >= 0 ? index : hls.subtitleTracks.findIndex((track) => track.lang?.toLowerCase().startsWith('en'));
-      hls.subtitleTrack = fallback >= 0 ? fallback : 0;
-      hls.subtitleDisplay = true;
-    }
+    if (hls) hls.subtitleDisplay = false;
     const video = videoElRef.current;
     if (video) {
       const tracks = Array.from(video.textTracks);
-      if (tracks.length === 0 && !hls?.subtitleTracks.length) return;
-      const preferred = tracks.find((track) => track.language.toLowerCase().startsWith(captionLanguage))
-        ?? tracks.find((track) => track.language.toLowerCase().startsWith('en'))
-        ?? tracks[0];
-      for (const track of tracks) track.mode = track === preferred ? 'showing' : 'disabled';
+      for (const track of tracks) track.mode = 'disabled';
     }
-    setCaptionsEnabled(true);
+    setLocalCaptionsEnabled(true);
+    onCaptionsChange?.(true);
   };
 
   useEffect(() => {
@@ -220,17 +232,16 @@ export function ReelVideo({
   return (
     <View style={styles.frame} pointerEvents="box-none">
       <View ref={containerRef} style={styles.video} />
-      {subtitleTracks.length > 0 || hasTextTracks ? (
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel={captionsEnabled ? 'Turn captions off' : 'Turn captions on'}
-          accessibilityState={{ selected: captionsEnabled }}
-          onPress={toggleCaptions}
-          style={styles.captionButton}
-        >
-          <Feather name="type" size={20} color="#FFFFFF" />
-        </Pressable>
-      ) : null}
+      {showCaptionButton ? <Pressable
+        accessibilityRole="button"
+        accessibilityLabel={translateText(captionsEnabled ? 'Turn captions off' : 'Turn captions on', captionLanguage ?? 'en')}
+        accessibilityState={{ selected: captionsEnabled }}
+        onPress={toggleCaptions}
+        style={styles.captionButton}
+      >
+        <Feather name="type" size={18} color="#FFFFFF" />
+        <AppText white bold size={13}>{captionsEnabled ? 'Captions on' : 'Captions'}</AppText>
+      </Pressable> : null}
       <View style={styles.centre} pointerEvents="none">
         <Animated.View style={[styles.badge, { opacity, transform: [{ scale }] }]}>
           <Feather name={muted ? 'volume-x' : 'volume-2'} size={28} color="#FFFFFF" />
@@ -268,11 +279,15 @@ const styles = StyleSheet.create({
     right: 18,
     top: 72,
     zIndex: 20,
-    width: 44,
+    minWidth: 44,
     height: 44,
+    paddingHorizontal: 13,
     borderRadius: 22,
+    flexDirection: 'row',
+    gap: 7,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: 'rgba(16,16,20,0.62)',
   },
+  captionButtonLabel: { color: '#FFFFFF', fontSize: 13, fontWeight: '600' },
 });

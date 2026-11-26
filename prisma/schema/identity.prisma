@@ -108,6 +108,18 @@ model UserPreference {
 enum AppLanguage {
   ENGLISH
   SPANISH
+  FRENCH
+  PORTUGUESE
+  ARABIC
+  HINDI
+  CHINESE
+  SWAHILI
+  AFRIKAANS
+  ZULU
+  XHOSA
+  SESOTHO
+  SETSWANA
+  NORTHERN_SOTHO
 }
 
 // A buyer's saved shipping addresses. Not in the docs: added for app integration Phase 3 on the

@@ -2,7 +2,19 @@ import { Injectable } from '@nestjs/common';
 import type { UserPreference } from '@prisma/client';
 import { PrismaService } from '../../../../platform/database/prisma.service';
 import { UserPreferencesRepositoryPort } from '../../domain/ports/user-preferences.repository.port';
-import { UserPreferences, UserPreferencesPatch } from '../../domain/entities/user-preferences.entity';
+import { AppLanguage, UserPreferences, UserPreferencesPatch } from '../../domain/entities/user-preferences.entity';
+
+const APP_LANGUAGE_TO_PRISMA = {
+  en: 'ENGLISH', es: 'SPANISH', fr: 'FRENCH', pt: 'PORTUGUESE', ar: 'ARABIC', hi: 'HINDI',
+  zh: 'CHINESE', sw: 'SWAHILI', af: 'AFRIKAANS', zu: 'ZULU', xh: 'XHOSA', st: 'SESOTHO',
+  tn: 'SETSWANA', nso: 'NORTHERN_SOTHO',
+} as const;
+
+const PRISMA_TO_APP_LANGUAGE: Record<UserPreference['appLanguage'], AppLanguage> = {
+  ENGLISH: 'en', SPANISH: 'es', FRENCH: 'fr', PORTUGUESE: 'pt', ARABIC: 'ar', HINDI: 'hi',
+  CHINESE: 'zh', SWAHILI: 'sw', AFRIKAANS: 'af', ZULU: 'zu', XHOSA: 'xh', SESOTHO: 'st',
+  SETSWANA: 'tn', NORTHERN_SOTHO: 'nso',
+};
 
 function toDomain(row: UserPreference): UserPreferences {
   return {
@@ -17,7 +29,7 @@ function toDomain(row: UserPreference): UserPreferences {
       showActivity: row.privacyShowActivity,
       onlineStatus: row.privacyOnlineStatus,
     },
-    language: row.appLanguage === 'SPANISH' ? 'es' : 'en',
+    language: PRISMA_TO_APP_LANGUAGE[row.appLanguage],
   };
 }
 
@@ -31,7 +43,7 @@ function toColumns(patch: UserPreferencesPatch): Partial<Omit<UserPreference, 'u
     ['privacyPublicProfile', patch.privacy?.publicProfile],
     ['privacyShowActivity', patch.privacy?.showActivity],
     ['privacyOnlineStatus', patch.privacy?.onlineStatus],
-    ['appLanguage', patch.language === undefined ? undefined : patch.language === 'es' ? 'SPANISH' : 'ENGLISH'],
+    ['appLanguage', patch.language === undefined ? undefined : APP_LANGUAGE_TO_PRISMA[patch.language]],
   ] as const;
   return Object.fromEntries(entries.filter(([, value]) => value !== undefined));
 }

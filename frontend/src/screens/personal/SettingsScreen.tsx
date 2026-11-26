@@ -1,6 +1,7 @@
 import React from 'react';
-import { Screen } from '../../components';
+import { LanguagePicker, Screen } from '../../components';
 import { SettingsMenu } from './SettingsMenu';
+import { useApp } from '../../hooks';
 
 // The settings hub (mobile) — reached directly as the Profile tab's own root (founder feedback
 // 24 Oct 2026: "unnecessary back button"), so no `onBack` here, same as the other 4 tabs. The
@@ -10,8 +11,10 @@ import { SettingsMenu } from './SettingsMenu';
 // No email line here (dropped 27 Oct 2026, founder feedback: it already shows one tap away on
 // `AccountScreen`, right under "Account" — showing it again here read as odd, not useful).
 export function SettingsScreen() {
+  const app = useApp();
   return (
     <Screen title="Settings">
+      <LanguagePicker onError={app.toast} />
       <SettingsMenu />
     </Screen>
   );

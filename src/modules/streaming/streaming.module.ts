@@ -56,6 +56,7 @@ import { StreamsController } from './api/http/streams.controller';
 import { SellerAnalyticsController } from './api/http/seller-analytics.controller';
 import { GetSellerViewersSummaryQuery } from './application/queries/get-seller-viewers-summary.query';
 import { StorageModule } from '../../platform/storage/storage.module';
+import { CaptionsService } from './infra/captions.service';
 
 // D-005 resolved 14 Oct 2026 (09-DECISIONS.md) — Amazon IVS. STREAM_PROVIDER picks the adapter at
 // boot; both stay registered so a rollback to LiveKit is still just an env var away, same reason
@@ -116,6 +117,7 @@ import { StorageModule } from '../../platform/storage/storage.module';
     SessionStatsFinalizer,
     StreamingService,
     StreamReconcileProcessor,
+    CaptionsService,
     StreamingGateway,
   ],
   exports: [StreamingService],

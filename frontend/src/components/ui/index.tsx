@@ -143,6 +143,49 @@ export function Button({
     </Pressable>
   );
 }
+
+export function LanguagePicker({ onError }: { onError?: (message: string) => void }) {
+  const preferences = React.useContext(PreferencesContext);
+  if (!preferences) return null;
+  const options = [
+    ['en', 'English'],
+    ['es', 'Español'],
+    ['fr', 'Français'],
+    ['pt', 'Português'],
+    ['ar', 'العربية'],
+    ['hi', 'हिन्दी'],
+    ['zh', '中文'],
+    ['sw', 'Kiswahili'],
+    ['af', 'Afrikaans'],
+    ['zu', 'isiZulu'],
+    ['xh', 'isiXhosa'],
+    ['st', 'Sesotho'],
+    ['tn', 'Setswana'],
+    ['nso', 'Sepedi'],
+  ] as const;
+
+  return (
+    <View style={{ marginBottom: spacing.lg }}>
+      <AppText bold>App language</AppText>
+      <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm, marginTop: spacing.xs }}>
+        {options.map(([language, label]) => (
+          <Pressable
+            key={language}
+            accessibilityRole="button"
+            accessibilityState={{ selected: preferences.language === language, disabled: !preferences.ready }}
+            disabled={!preferences.ready}
+            onPress={async () => {
+              if (!(await preferences.updateLanguage(language))) onError?.("Couldn't save that change. Try again.");
+            }}
+            style={{ paddingVertical: spacing.sm, paddingHorizontal: spacing.md, opacity: preferences.language === language ? 1 : 0.65 }}
+          >
+            <AppText bold={preferences.language === language}>{label}</AppText>
+          </Pressable>
+        ))}
+      </View>
+    </View>
+  );
+}
 export function IconButton({
   name,
   onPress,

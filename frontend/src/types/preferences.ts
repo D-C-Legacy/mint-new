@@ -24,4 +24,4 @@ export type PrivacyPreferences = {
   showActivity: boolean;
   onlineStatus: boolean;
 };
-export type AppLanguage = 'en' | 'es';
+export type AppLanguage = 'en' | 'es' | 'fr' | 'pt' | 'ar' | 'hi' | 'zh' | 'sw' | 'af' | 'zu' | 'xh' | 'st' | 'tn' | 'nso';

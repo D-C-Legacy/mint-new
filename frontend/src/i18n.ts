@@ -140,9 +140,75 @@ const ES_MORE: Record<string, string> = {
   'Watch. Bid. Buy. Discover something worth staying for.': 'Mira. Puja. Compra. Descubre algo que merece quedarse.', 'We’re reviewing your application. This usually takes a few days.': 'Estamos revisando tu solicitud. Suele tardar unos días.', 'Weight in grams (optional)': 'Peso en gramos (opcional)', 'Welcome to the team!': '¡Te damos la bienvenida al equipo!', 'What happens when you delete your account': 'Qué ocurre al eliminar tu cuenta', 'What’s the find?': '¿Qué has encontrado?', 'Where shopping goes live.': 'Donde las compras cobran vida.',
   'Why are you reporting this review?': '¿Por qué denuncias esta reseña?', 'Withdraw application': 'Retirar solicitud', 'Write a message…': 'Escribe un mensaje…', 'Write a public response…': 'Escribe una respuesta pública…', 'You countered at': 'Enviaste una contraoferta de', 'You haven’t saved a card yet.': 'Aún no has guardado una tarjeta.', 'You haven’t saved an address yet.': 'Aún no has guardado una dirección.', 'You’re the highest bidder.': 'Tienes la puja más alta.', 'You’ve been added as': 'Te añadieron como', 'Your application': 'Tu solicitud', 'Your bid': 'Tu puja', 'Your bid ($)': 'Tu puja ($)', 'Your counter price (USD)': 'Tu precio de contraoferta (USD)', 'Your current email is': 'Tu correo actual es', 'Your inventory': 'Tu inventario', 'Your offer ($)': 'Tu oferta ($)', 'Your payment went through. The seller can now ship your order.': 'El pago se realizó. El vendedor ya puede enviar tu pedido.', 'Your people and your next find are waiting.': 'Tu gente y tu próximo hallazgo te esperan.', 'Your response': 'Tu respuesta', 'Your review': 'Tu reseña', 'Your reviews': 'Tus reseñas', 'Your seller account is currently suspended.': 'Tu cuenta de vendedor está suspendida.',
   'available': 'disponible', 'current': 'actual', 'follower': 'seguidor', 'followers': 'seguidores', 'for $': 'por $', 'increments': 'incrementos', 'products': 'productos', 'shipping': 'envío', 'watching': 'viendo', 'won it!': '¡lo ganó!',
+  'Captions unavailable': 'Subtítulos no disponibles',
   '•••• tap to copy': '•••• toca para copiar', '· Free ship + tax': '· Envío gratis + impuestos', '· Order': '· Pedido', '· Placed': '· Realizado', '· Qty': '· Cant.', '· Tracking': '· Seguimiento',
 };
 
+const COMMON: readonly [string, string, string, string, string, string, string, string, string, string, string, string, string, string, string][] = [
+  ['Profile','Profile','Perfil','Profil','Perfil','الملف الشخصي','प्रोफ़ाइल','个人资料','Wasifu','Profiel','Iphrofayela','Iprofayile','Boemo','Porofaele','Porofaele'],
+  ['Settings','Settings','Configuración','Paramètres','Configurações','الإعدادات','सेटिंग्स','设置','Mipangilio','Instellings','Izilungiselelo','Iisetingi','Litlhophiso','Dithulaganyo','Dipeakanyo'],
+  ['Account','Account','Cuenta','Compte','Conta','الحساب','खाता','账户','Akaunti','Rekening','I-akhawunti','Iakhawunti','Akhaonte','Akhaonto','Akhaonto'],
+  ['App language','App language','Idioma de la aplicación','Langue de l’application','Idioma do aplicativo','لغة التطبيق','ऐप की भाषा','应用语言','Lugha ya programu','Programtaal','Ulimi lohlelo lokusebenza','Ulwimi lwe-app','Puo ya app','Puo ya app','Leleme la app'],
+  ['Home','Home','Inicio','Accueil','Início','الرئيسية','होम','首页','Nyumbani','Tuis','Ekhaya','Ekhaya','Lapeng','Gae','Gae'],
+  ['Discover','Discover','Explorar','Découvrir','Descobrir','اكتشف','खोजें','发现','Gundua','Ontdek','Thola','Fumanisa','Fumana','Batla','Nyaka'],
+  ['Live','Live','En vivo','En direct','Ao vivo','مباشر','लाइव','直播','Moja kwa moja','Regstreeks','Bukhoma','Bukhoma','Phela','Tshela','Phela'],
+  ['Sell','Sell','Vender','Vendre','Vender','بيع','बेचें','出售','Uza','Verkoop','Thengisa','Thengisa','Rekisa','Rekisa','Rekisa'],
+  ['Orders','Orders','Pedidos','Commandes','Pedidos','الطلبات','ऑर्डर','订单','Maagizo','Bestellings','Ama-oda','Ii-odolo','Litaelo','Ditaelo','Ditaelo'],
+  ['Your orders','Your orders','Tus pedidos','Vos commandes','Seus pedidos','طلباتك','आपके ऑर्डर','你的订单','Maagizo yako','Jou bestellings','Ama-oda akho','Ii-odolo zakho','Litaelo tsa hao','Ditaelo tsa gago','Ditaelo tša gago'],
+  ['Payment Methods','Payment Methods','Métodos de pago','Moyens de paiement','Métodos de pagamento','طرق الدفع','भुगतान के तरीके','付款方式','Njia za malipo','Betaalmetodes','Izindlela zokukhokha','Iindlela zokuhlawula','Mekhoa ea tefo','Mekgwa ya tuelo','Mekgwa ya tefo'],
+  ['Purchase History','Purchase History','Historial de compras','Historique des achats','Histórico de compras','سجل المشتريات','खरीद इतिहास','购买记录','Historia ya ununuzi','Aankoopgeskiedenis','Umlando wokuthenga','Imbali yokuthenga','Nalane ya ditheko','Hisitori ya ditheko','Histori ya ditheko'],
+  ['Preferences','Preferences','Preferencias','Préférences','Preferências','التفضيلات','प्राथमिकताएं','偏好设置','Mapendeleo','Voorkeure','Okuthandwayo','Ezikhethwayo','Dikgetho','Dikgetho','Dikgetho'],
+  ['Help & Support','Help & Support','Ayuda y soporte','Aide et assistance','Ajuda e suporte','المساعدة والدعم','सहायता और समर्थन','帮助与支持','Msaada na usaidizi','Hulp en ondersteuning','Usizo nokwesekwa','Uncedo nenkxaso','Thuso le tshehetso','Thuso le tshegetso','Thušo le thekgo'],
+  ['Messages','Messages','Mensajes','Messages','Mensagens','الرسائل','संदेश','消息','Ujumbe','Boodskappe','Imilayezo','Imiyalezo','Melaetsa','Melaetsa','Melaetsa'],
+  ['Notifications','Notifications','Notificaciones','Notifications','Notificações','الإشعارات','सूचनाएं','通知','Arifa','Kennisgewings','Izaziso','Izaziso','Ditsebiso','Dikitsiso','Ditsebišo'],
+  ['Privacy','Privacy','Privacidad','Confidentialité','Privacidade','الخصوصية','गोपनीयता','隐私','Faragha','Privaatheid','Ubumfihlo','Ubumfihlo','Lekunutu','Sephiri','Sephiri'],
+  ['More','More','Más','Plus','Mais','المزيد','और','更多','Zaidi','Meer','Okunye','Okungakumbi','Tse ding','Tse dingwe','Tše dingwe'],
+  ['Sign in','Sign in','Iniciar sesión','Se connecter','Entrar','تسجيل الدخول','साइन इन','登录','Ingia','Meld aan','Ngena ngemvume','Ngena','Kena','Tsena','Tsena'],
+  ['Sign out','Sign out','Cerrar sesión','Se déconnecter','Sair','تسجيل الخروج','साइन आउट','退出登录','Toka','Meld af','Phuma','Phuma','Tsoa','Tswa','Tšwa'],
+  ['Email','Email','Correo electrónico','E-mail','E-mail','البريد الإلكتروني','ईमेल','电子邮件','Barua pepe','E-pos','I-imeyili','I-imeyile','Imeile','Imeile','Imeile'],
+  ['Password','Password','Contraseña','Mot de passe','Senha','كلمة المرور','पासवर्ड','密码','Nenosiri','Wagwoord','Iphasiwedi','Igama lokugqitha','Phasewete','Phasewete','Lentšu la go feta'],
+  ['Search','Search','Buscar','Rechercher','Pesquisar','بحث','खोजें','搜索','Tafuta','Soek','Sesha','Khangela','Batla','Batla','Nyaka'],
+  ['Save','Save','Guardar','Enregistrer','Salvar','حفظ','सहेजें','保存','Hifadhi','Stoor','Londoloza','Gcina','Boloka','Boloka','Boloka'],
+  ['Cancel','Cancel','Cancelar','Annuler','Cancelar','إلغاء','रद्द करें','取消','Ghairi','Kanselleer','Khansela','Rhoxisa','Hlakola','Khansela','Khansela'],
+  ['Continue','Continue','Continuar','Continuer','Continuar','متابعة','जारी रखें','继续','Endelea','Gaan voort','Qhubeka','Qhubeka','Tswela pele','Tswelela pele','Tšwela pele'],
+  ['Back','Back','Volver','Retour','Voltar','رجوع','वापस','返回','Rudi','Terug','Emuva','Emva','Morao','Morago','Morago'],
+  ['Done','Done','Listo','Terminé','Concluído','تم','हो गया','完成','Imekamilika','Klaar','Kwenziwe','Kugqityiwe','Ho fedile','Go fedile','Go fedile'],
+  ['Buy now','Buy now','Comprar ahora','Acheter maintenant','Comprar agora','اشتر الآن','अभी खरीदें','立即购买','Nunua sasa','Koop nou','Thenga manje','Thenga ngoku','Reka hona jwale','Reka jaanong','Reka gona bjale'],
+  ['Make an offer','Make an offer','Hacer una oferta','Faire une offre','Fazer uma oferta','قدّم عرضًا','ऑफ़र दें','出价','Toa ofa','Maak ’n aanbod','Yenza isipho','Yenza isithembiso','Etsa tlhahiso','Dira tshitshinyo','Dira tšhišinyo'],
+  ['Place bid','Place bid','Pujar','Enchérir','Dar lance','قدّم مزايدة','बोली लगाएं','出价','Weka zabuni','Bied','Bhida','Bhida','Etsa kopo','Tsenya kopo','Tsenya kabo'],
+  ['Featured product','Featured product','Producto destacado','Produit vedette','Produto em destaque','المنتج المميز','विशेष उत्पाद','推荐商品','Bidhaa iliyoangaziwa','Uitgestalde produk','Umkhiqizo ofakiwe','Imveliso eboniswayo','Sehlahiswa se hlahelletseng','Setšweletšwa se se kgethegilego','Setšweletšwa se se kgethegilego'],
+  ['Chat','Chat','Chat','Discussion','Chat','الدردشة','चैट','聊天','Gumzo','Geselskap','Ingxoxo','Incoko','Moqoqo','Puisano','Poledišano'],
+  ['Share','Share','Compartir','Partager','Compartilhar','مشاركة','शेयर करें','分享','Shiriki','Deel','Yabelana','Yabelana','Arolelana','Abelana','Abelana'],
+  ['Follow','Follow','Seguir','Suivre','Seguir','متابعة','फ़ॉलो करें','关注','Fuata','Volg','Landela','Landela','Latela','Latela','Latela'],
+  ['Mute','Mute','Silenciar','Couper le son','Silenciar','كتم الصوت','म्यूट करें','静音','Nyamazisha','Demp','Thulisa','Thulisa','Homotsa','Didimatsa','Homotša'],
+  ['Unmute','Unmute','Activar sonido','Rétablir le son','Ativar som','إلغاء كتم الصوت','अनम्यूट करें','取消静音','Washa sauti','Ontdemp','Vula umsindo','Vula isandi','Bulela modumo','Bulela modumo','Bulela modumo'],
+  ['Turn captions on','Turn captions on','Activar subtítulos','Activer les sous-titres','Ativar legendas','تشغيل الترجمة النصية','कैप्शन चालू करें','开启字幕','Washa manukuu','Skakel onderskrifte aan','Vula imibhalo engezansi','Vula amagama-ncazo','Bulela ditlhalosi','Bulela ditlhalosi','Bulela ditlhalosi'],
+  ['Turn captions off','Turn captions off','Desactivar subtítulos','Désactiver les sous-titres','Desativar legendas','إيقاف الترجمة النصية','कैप्शन बंद करें','关闭字幕','Zima manukuu','Skakel onderskrifte af','Vala imibhalo engezansi','Cima amagama-ncazo','Tima ditlhalosi','Tima ditlhalosi','Tima ditlhalosi'],
+  ['Captions','Captions','Subtítulos','Sous-titres','Legendas','الترجمة النصية','कैप्शन','字幕','Manukuu','Onderskrifte','Imibhalo engezansi','Amagama-ncazo','Ditlhalosi','Ditlhalosi','Ditlhalosi'],
+  ['Captions on','Captions on','Subtítulos activados','Sous-titres activés','Legendas ativadas','الترجمة النصية مفعلة','कैप्शन चालू','字幕已开启','Manukuu yamewashwa','Onderskrifte aan','Imibhalo engezansi ivuliwe','Amagama-ncazo avuliwe','Ditlhalosi di butswe','Ditlhalosi di tshubile','Ditlhalosi di butswe'],
+  ['Captions unavailable','Captions unavailable','Subtítulos no disponibles','Sous-titres indisponibles','Legendas indisponíveis','الترجمة النصية غير متاحة','कैप्शन उपलब्ध नहीं हैं','字幕不可用','Manukuu hayapatikani','Onderskrifte nie beskikbaar nie','Imibhalo engezansi ayitholakali','Amagama-ncazo awafumaneki','Ditlhalosi ha di hwetšagale','Ditlhalosi ga di teng','Ditlhalosi ga di gona'],
+  ['Your message','Your message','Tu mensaje','Votre message','Sua mensagem','رسالتك','आपका संदेश','你的消息','Ujumbe wako','Jou boodskap','Umlayezo wakho','Umyalezo wakho','Molaetsa wa hao','Molaetsa wa gago','Molaetša wa gago'],
+  ['Contact support','Contact support','Contactar con soporte','Contacter l’assistance','Contatar suporte','تواصل مع الدعم','सहायता से संपर्क करें','联系支持','Wasiliana na usaidizi','Kontak ondersteuning','Xhumana nosizo','Qhagamshelana nenkxaso','Ikopanye le tshehetso','Ikgolaganye le tshegetso','Ikgokaganye le thekgo'],
+  ['Status','Status','Estado','Statut','Status','الحالة','स्थिति','状态','Hali','Status','Isimo','Isimo','Boemo','Maemo','Maemo'],
+  ['Total','Total','Total','Total','Total','الإجمالي','कुल','总计','Jumla','Totaal','Isamba','Iyonke','Kakaretso','Palogotlhe','Palomoka'],
+  ['Date','Date','Fecha','Date','Data','التاريخ','तारीख','日期','Tarehe','Datum','Usuku','Umhla','Letsatsi','Letlha','Letšatši'],
+  ['Loading...','Loading...','Cargando...','Chargement...','Carregando...','جار التحميل...','लोड हो रहा है...','加载中...','Inapakia...','Laai tans...','Iyalayisha...','Iyalayisha...','E a laisa...','E a laisa...','E a laisa...'],
+  ['No orders yet.','No orders yet.','Aún no hay pedidos.','Aucune commande pour le moment.','Ainda não há pedidos.','لا توجد طلبات بعد.','अभी तक कोई ऑर्डर नहीं।','暂无订单。','Bado hakuna maagizo.','Nog geen bestellings nie.','Awekho ama-oda okwamanje.','Akukho zi-odolo okwangoku.','Ha ho na ditaelo hona jwale.','Ga go na ditaelo ga jaana.','Ga go na ditaelo ga bjale.'],
+  ['We’re here to help.','We’re here to help.','Estamos aquí para ayudarte.','Nous sommes là pour vous aider.','Estamos aqui para ajudar.','نحن هنا للمساعدة.','हम मदद के लिए यहां हैं।','我们随时为您提供帮助。','Tuko hapa kusaidia.','Ons is hier om te help.','Silapha ukukusiza.','Silapha ukukunceda.','Re mona ho thusa.','Re teng go thusa.','Re gona go thuša.'],
+];
+
+const LANGUAGE_INDEX: Record<Exclude<AppLanguage, 'en' | 'es'>, number> = {
+  fr: 3, pt: 4, ar: 5, hi: 6, zh: 7, sw: 8, af: 9, zu: 10, xh: 11, st: 12, tn: 13, nso: 14,
+};
+const COMMON_TRANSLATIONS: Partial<Record<AppLanguage, Record<string, string>>> = {};
+COMMON_TRANSLATIONS.es = Object.fromEntries(COMMON.map((entry) => [entry[0], entry[2] ?? entry[1]]));
+for (const language of Object.keys(LANGUAGE_INDEX) as (keyof typeof LANGUAGE_INDEX)[]) {
+  const index = LANGUAGE_INDEX[language];
+  COMMON_TRANSLATIONS[language] = Object.fromEntries(COMMON.map((entry) => [entry[0], entry[index] ?? entry[1]]));
+}
+
 export function translateText(value: string, language: AppLanguage): string {
-  return language === 'es' ? (ES[value] ?? ES_MORE[value] ?? value) : value;
+  if (language === 'en') return value;
+  if (language === 'es') return ES[value] ?? ES_MORE[value] ?? COMMON_TRANSLATIONS.es?.[value] ?? value;
+  return COMMON_TRANSLATIONS[language]?.[value] ?? value;
 }

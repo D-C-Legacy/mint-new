@@ -37,6 +37,9 @@ export const EnvSchema = z
     // is the whole point of building the flow now (flipping it on later is a config change).
     GOOGLE_CLIENT_ID: z.string().optional(),
     GOOGLE_CLIENT_SECRET: z.string().optional(),
+    // Streaming captions use Application Default Credentials; project id remains optional so
+    // environments without captions configured can still boot and serve the rest of the app.
+    GOOGLE_CLOUD_PROJECT_ID: z.string().min(1).optional(),
     GOOGLE_REDIRECT_URI: z.string().url().optional(),
     // Audience for a native-app Google id_token, distinct from the web client id above.
     GOOGLE_IOS_CLIENT_ID: z.string().optional(),

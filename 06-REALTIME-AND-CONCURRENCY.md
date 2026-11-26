@@ -41,6 +41,7 @@ Client emits room.join { sessionId }
 | `offer.submit` | `{ saleId, amount, clientRef }`   | 2/sec per user |
 | `chat.send`    | `{ sessionId, body, clientRef }`  | 3/sec per user |
 | `heartbeat`    | `{ sessionId }`                   | every 15s      |
+| `captions.watch` | `{ sessionId, language }`        | every 30s while captions are enabled; requires prior `room.join` |
 
 `clientRef` is a client-generated id echoed back in the ack, so the app can match a response to its own optimistic UI without guessing.
 
@@ -64,8 +65,14 @@ Client emits room.join { sessionId }
 | `chat.deleted`       | `{ messageId }`                                           | room                                                                                                                                        |
 | `viewers.count`      | `{ count }`                                               | room, throttled to 1/sec                                                                                                                    |
 | `stream.ended`       | `{ sessionId }`                                           | room                                                                                                                                        |
+| `stream.caption`     | `{ sessionId, language, text }`                           | room; transcript translated to the named account language                                                                                  |
+| `captions.error`     | `{ sessionId }`                                           | room; automatic caption service is unavailable                                                                                            |
 
 **Rule:** room-wide events carry only what the UI needs to render. Never broadcast a full entity with private fields.
+
+`captions.watch` keeps a viewer's requested language active for the live room. The realtime process
+decodes the IVS HLS audio and sends it to Google Cloud Speech-to-Text and Translation. Caption text
+is streamed to the room and is not persisted.
 
 ---
 

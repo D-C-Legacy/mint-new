@@ -1,7 +1,7 @@
 import * as tokens from "../../theme";
 import React from "react";
 import { Pressable, ScrollView, View, useWindowDimensions } from "react-native";
-import { AppText, Icon, type IconName } from "../../components";
+import { AppText, Icon, LanguagePicker, type IconName } from "../../components";
 import { colors as c, radii, spacing } from "../../theme";
 import { ROUTES, type RouteName } from "../../constants/routes";
 import { useApp, useAuth } from "../../hooks";
@@ -103,6 +103,7 @@ function DesktopSettings({ name }: { name: string }) {
       <ScrollView key={name} style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
         {isHub ? (
           <View style={{ padding: tokens.spacing.xl }}>
+            <LanguagePicker onError={app.toast} />
             <AppText muted>Choose a section from the left.</AppText>
           </View>
         ) : (

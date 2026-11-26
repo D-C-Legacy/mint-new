@@ -33,6 +33,8 @@ import {
 import { RoomJoinSchema, RoomJoinDto } from './dto/room-join.dto';
 import { RoomLeaveSchema, RoomLeaveDto } from './dto/room-leave.dto';
 import { HeartbeatSchema, HeartbeatDto } from './dto/heartbeat.dto';
+import { CaptionsWatchSchema, CaptionsWatchDto } from './dto/captions-watch.dto';
+import { CaptionsService, STREAM_CAPTION_ERROR_EVENT, STREAM_CAPTION_EVENT } from '../../infra/captions.service';
 
 function roomName(sessionId: string): string {
   return `room:${sessionId}`;
@@ -69,11 +71,27 @@ export class StreamingGateway implements OnGatewayConnection, OnGatewayDisconnec
     // broken with forwardRef on both sides.
     @Inject(forwardRef(() => ChatService)) private readonly chat: ChatService,
     @Inject(EVENT_BUS) private readonly eventBus: EventBusPort,
+    private readonly captions: CaptionsService,
   ) {}
 
   // Same cross-process reasoning as SalesGateway: queue featuring can be published from the API
   // process, but the sockets live in realtime.
   afterInit(): void {
+    this.eventBus.subscribe<{ sessionId: string; language: string; text: string }>(
+      STREAM_CAPTION_EVENT,
+      (event) => {
+        const caption = event.payload;
+        this.server?.to(roomName(caption.sessionId)).emit('stream.caption', caption);
+      },
+      { crossProcess: true },
+    );
+    this.eventBus.subscribe<{ sessionId: string }>(
+      STREAM_CAPTION_ERROR_EVENT,
+      (event) => {
+        this.server?.to(roomName(event.payload.sessionId)).emit('captions.error', event.payload);
+      },
+      { crossProcess: true },
+    );
     this.eventBus.subscribe<QueueItemFeaturedPayload>(
       QUEUE_ITEM_FEATURED_EVENT,
       (event) => {
@@ -227,6 +245,23 @@ export class StreamingGateway implements OnGatewayConnection, OnGatewayDisconnec
   ): Promise<void> {
     const { userId } = client.data as AuthenticatedSocketData;
     await this.recordPresenceAndMaybeBroadcast(dto.sessionId, userId);
+  }
+
+  @UseGuards(WsAuthGuard, WsDefaultRateLimitGuard)
+  @SubscribeMessage('captions.watch')
+  async onCaptionsWatch(
+    @ConnectedSocket() client: Socket,
+    @MessageBody(new ZodValidationPipe(CaptionsWatchSchema)) dto: CaptionsWatchDto,
+  ): Promise<void> {
+    if (!client.rooms.has(roomName(dto.sessionId))) {
+      throw new Error('Join the live stream before enabling captions');
+    }
+    const { userId } = client.data as AuthenticatedSocketData;
+    try {
+      await this.captions.watch(dto.sessionId, userId, dto.language);
+    } catch {
+      client.emit('captions.error', { sessionId: dto.sessionId });
+    }
   }
 
   private async recordPresenceAndMaybeBroadcast(sessionId: string, userId: string): Promise<void> {

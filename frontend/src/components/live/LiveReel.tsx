@@ -1,5 +1,5 @@
 import * as tokens from '../../theme';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   Animated,
   KeyboardAvoidingView,
@@ -35,6 +35,7 @@ import { blockUser as blockUserApi } from '../../api/blocks';
 import { stockImageFor } from '../../utils/stock-image';
 import { useLiveChat, type LiveChatMessage } from '../../hooks/useLiveChat';
 import { usePurchaseFeed } from '../../hooks/usePurchaseFeed';
+import { useStreamCaptions } from '../../hooks/useStreamCaptions';
 import { ReelVideo } from './ReelVideo';
 import { LiveSellerHeader } from './LiveSellerHeader';
 import { LiveChatOverlay } from './LiveChatOverlay';
@@ -107,6 +108,9 @@ export function LiveReel({
   const [reportReason, setReportReason] = useState('');
   const [reportBusy, setReportBusy] = useState(false);
   const [reportError, setReportError] = useState('');
+  const [captionsEnabled, setCaptionsEnabled] = useState(false);
+  const onCaptionsChange = useCallback((enabled: boolean) => setCaptionsEnabled(enabled), []);
+  const captions = useStreamCaptions(session.id, active, captionsEnabled, preferences.language);
 
   function openReport(message: LiveChatMessage) {
     setReportTarget(message);
@@ -210,7 +214,15 @@ export function LiveReel({
   return (
     <View style={{ flex: 1, backgroundColor: c.ink }}>
       {live.playbackUrl ? (
-        <ReelVideo source={live.playbackUrl} active={active} muted={muted} flash={flash} captionLanguage={preferences.language} />
+        <ReelVideo
+          source={live.playbackUrl}
+          active={active}
+          muted={muted}
+          flash={flash}
+          showCaptionButton={false}
+          captionsEnabled={captionsEnabled}
+          onCaptionsChange={onCaptionsChange}
+        />
       ) : (
         <View style={StyleSheet.absoluteFill}>
           {session.thumbnailUrl ? (
@@ -227,6 +239,13 @@ export function LiveReel({
         pointerEvents="none"
         style={[StyleSheet.absoluteFill, { backgroundColor: tokens.colors.mediaShade }]}
       />
+      {captionsEnabled && (captions.caption || captions.unavailable) ? (
+        <View pointerEvents="none" style={{ position: 'absolute', zIndex: 3, left: tokens.spacing.xl, right: tokens.spacing.xl, bottom: 190, alignItems: 'center' }}>
+          <View style={{ backgroundColor: 'rgba(0,0,0,0.78)', borderRadius: tokens.radii.button, paddingHorizontal: tokens.spacing.md, paddingVertical: tokens.spacing.sm }}>
+            <AppText white bold style={{ textAlign: 'center' }}>{captions.unavailable ? 'Captions unavailable' : captions.caption}</AppText>
+          </View>
+        </View>
+      ) : null}
       <Animated.View
         pointerEvents="box-none"
         style={{
@@ -236,7 +255,7 @@ export function LiveReel({
           justifyContent: 'space-between',
         }}
       >
-        <View style={{ gap: tokens.spacing.md }}>
+        <View style={{ gap: tokens.spacing.md, paddingRight: Platform.OS === 'web' ? 0 : 52 }}>
           {channel ? (
             <LiveSellerHeader
               name={channel.name}
@@ -250,6 +269,28 @@ export function LiveReel({
           ) : null}
           <PurchaseTicker purchases={purchaseFeed} />
         </View>
+        {Platform.OS !== 'web' ? (
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="More stream options"
+            accessibilityHint="Opens captions and other stream options"
+            onPress={() => setSheet('more')}
+            style={({ pressed }) => ({
+              position: 'absolute',
+              right: tokens.spacing.xl,
+              top: tokens.spacing.xl,
+              width: 44,
+              height: 44,
+              borderRadius: 22,
+              alignItems: 'center',
+              justifyContent: 'center',
+              backgroundColor: 'rgba(16,16,20,0.62)',
+              opacity: pressed ? 0.75 : 1,
+            })}
+          >
+            <Feather name="more-vertical" size={22} color="#FFFFFF" />
+          </Pressable>
+        ) : null}
         <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
           {live.winMoment ? (
             <View
@@ -601,6 +642,30 @@ export function LiveReel({
             </View>
           )
         ) : null}
+      </Sheet>
+
+      <Sheet visible={sheet === 'more'} title="More" onClose={() => setSheet('')}>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={captionsEnabled ? 'Turn captions off' : 'Turn captions on'}
+          accessibilityState={{ selected: captionsEnabled }}
+          onPress={() => {
+            onCaptionsChange(!captionsEnabled);
+            setSheet('');
+          }}
+          style={({ pressed }) => ({
+            minHeight: 52,
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: tokens.spacing.md,
+            paddingHorizontal: tokens.spacing.md,
+            borderRadius: tokens.radii.button,
+            backgroundColor: pressed ? c.softCanvas : 'transparent',
+          })}
+        >
+          <Feather name="type" size={20} color={c.text} />
+          <AppText bold>{captionsEnabled ? 'Captions on' : 'Captions'}</AppText>
+        </Pressable>
       </Sheet>
     </View>
   );

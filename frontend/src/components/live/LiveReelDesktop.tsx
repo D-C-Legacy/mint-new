@@ -27,6 +27,7 @@ import { blockUser as blockUserApi } from '../../api/blocks';
 import { stockImageFor } from '../../utils/stock-image';
 import { useLiveChat, type LiveChatMessage } from '../../hooks/useLiveChat';
 import { usePurchaseFeed } from '../../hooks/usePurchaseFeed';
+import { useStreamCaptions } from '../../hooks/useStreamCaptions';
 import { ReelVideo } from './ReelVideo';
 import { LiveSellerHeader } from './LiveSellerHeader';
 import { InitialsAvatar } from './InitialsAvatar';
@@ -144,6 +145,8 @@ export function LiveReelDesktop({ session, active }: { session: StreamSession; a
   const [following, setFollowing] = useState<boolean | null>(null);
   const [followBusy, setFollowBusy] = useState(false);
   const [now, setNow] = useState(() => Date.now());
+  const [captionsEnabled, setCaptionsEnabled] = useState(false);
+  const captions = useStreamCaptions(session.id, active, captionsEnabled, preferences.language);
   const chatList = useRef<ScrollView>(null);
 
   useEffect(() => {
@@ -227,6 +230,8 @@ export function LiveReelDesktop({ session, active }: { session: StreamSession; a
             volume={volume}
             flash={0}
             captionLanguage={preferences.language}
+            captionsEnabled={captionsEnabled}
+            onCaptionsChange={setCaptionsEnabled}
           />
         ) : session.thumbnailUrl ? (
           <Photo uri={session.thumbnailUrl} style={StyleSheet.absoluteFillObject} />
@@ -236,6 +241,13 @@ export function LiveReelDesktop({ session, active }: { session: StreamSession; a
           style={[StyleSheet.absoluteFill, { backgroundColor: tokens.colors.mediaShade }]}
         />
         <View style={styles.videoOverlay} pointerEvents="box-none">
+          {captionsEnabled && (captions.caption || captions.unavailable) ? (
+            <View pointerEvents="none" style={{ position: 'absolute', left: 20, right: 20, bottom: 24, alignItems: 'center', zIndex: 4 }}>
+              <View style={{ backgroundColor: 'rgba(0,0,0,0.78)', borderRadius: 10, paddingHorizontal: 12, paddingVertical: 8 }}>
+                <AppText white bold style={{ textAlign: 'center' }}>{captions.unavailable ? 'Captions unavailable' : captions.caption}</AppText>
+              </View>
+            </View>
+          ) : null}
           {channel ? (
             <LiveSellerHeader
               name={channel.name}
